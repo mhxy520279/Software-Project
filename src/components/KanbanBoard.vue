@@ -15,19 +15,30 @@ const columns = [
 ]
 
 const grouped = computed(() => {
-  const map: Record<string, typeof props.tasks> = { todo: [], 'in-progress': [], done: [] }
+  const map = { todo: [], 'in-progress': [], done: [] }
   props.tasks.forEach(t => {
     if (map[t.status]) map[t.status].push(t)
   })
   return map
 })
 
-function onDrop(taskId: string, newStatus: string) {
-  emit('move', taskId, newStatus)
+function onDrop(e, status) {
+  const taskId = e.dataTransfer.getData('taskId')
+  if (!taskId) return
+  emit('move', taskId, status)
 }
 
-function allowDrop(e: DragEvent) {
+function allowDrop(e) {
   e.preventDefault()
+}
+
+function onDragStart(e, taskId) {
+  e.dataTransfer.setData('taskId', taskId)
+  e.currentTarget.style.opacity = '0.4'
+}
+
+function onDragEnd(e) {
+  e.currentTarget.style.opacity = '1'
 }
 </script>
 
@@ -52,8 +63,8 @@ function allowDrop(e: DragEvent) {
           v-for="task in grouped[col.key]"
           :key="task.id"
           draggable
-          @dragstart="($event) => ($event.dataTransfer as DataTransfer).setData('taskId', task.id)"
-          @dragend="($event) => ($event.target as HTMLElement).style.opacity = '1'"
+          @dragstart="onDragStart($event, task.id)"
+          @dragend="onDragEnd"
           class="cursor-grab active:cursor-grabbing"
         >
           <TaskCard

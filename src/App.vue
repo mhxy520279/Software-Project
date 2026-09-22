@@ -9,12 +9,12 @@ import ThemeToggle from './components/ThemeToggle.vue'
 const showModal = ref(false)
 const view = ref('list')
 
-function handleAddTask(task: any) {
+function handleAddTask(task) {
   taskStore.addTask(task)
   showModal.value = false
 }
 
-function handleMoveTask(id: string, status: string) {
+function handleMoveTask(id, status) {
   taskStore.updateTask(id, { status })
 }
 </script>

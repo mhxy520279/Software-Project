@@ -8,8 +8,10 @@ const defaultTasks: Task[] = [
   { id: '3', title: '实现数据持久化', description: '使用 localStorage 保存任务数据', status: 'todo', priority: 'low', dueDate: '2026-10-10', createdAt: new Date().toISOString() },
 ]
 
+const stored = loadTasks()
+
 const state = reactive<{ tasks: Task[] }>({
-  tasks: loadTasks().length > 0 ? loadTasks() : defaultTasks,
+  tasks: stored.length > 0 ? stored : defaultTasks,
 })
 
 watch(

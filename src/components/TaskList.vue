@@ -11,15 +11,16 @@ const emit = defineEmits(['toggle', 'delete'])
 const filter = ref('all')
 
 const filteredTasks = computed(() => {
-  if (filter.value === 'all') return props.tasks
-  return props.tasks.filter(t => t.status === filter.value)
+  const list = props.tasks || []
+  if (filter.value === 'all') return list
+  return list.filter(t => t.status === filter.value)
 })
 
 const sortedTasks = computed(() =>
   [...filteredTasks.value].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 )
 
-const statusLabels = { all: '全部', todo: '待办', 'in-progress': '进行中', done: '完成' }
+const statusLabels = { all: '全部', todo: '待办', 'in-progress': '进行中', done: '已完成' }
 </script>
 
 <template>

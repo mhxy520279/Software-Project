@@ -46,13 +46,15 @@ describe('TaskList', () => {
     expect(undefinedWrapper.text()).toContain('还没有任务')
   })
 
-  it('转发 toggle 与 delete 事件', () => {
+  it('转发 toggle、delete 与 edit 事件', () => {
     const tasks = [makeTask('1', '任务', 'todo', '2026-09-20T00:00:00.000Z')]
     const wrapper = mount(TaskList, { props: { tasks } })
     const card = wrapper.findComponent(TaskCard)
     card.vm.$emit('toggle', '1')
     card.vm.$emit('delete', '1')
+    card.vm.$emit('edit', '1')
     expect(wrapper.emitted('toggle')[0]).toEqual(['1'])
     expect(wrapper.emitted('delete')[0]).toEqual(['1'])
+    expect(wrapper.emitted('edit')[0]).toEqual(['1'])
   })
 })

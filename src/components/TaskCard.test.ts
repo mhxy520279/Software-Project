@@ -38,6 +38,12 @@ describe('TaskCard', () => {
     expect(wrapper.emitted('toggle')).toBeUndefined()
   })
 
+  it('点击编辑按钮触发 edit 事件', async () => {
+    const wrapper = mount(TaskCard, { props: { task: makeTask() } })
+    await wrapper.find('button[title="编辑任务"]').trigger('click')
+    expect(wrapper.emitted('edit')[0]).toEqual(['1'])
+  })
+
   it('已完成任务标题带删除线且复选框已选中', () => {
     const wrapper = mount(TaskCard, { props: { task: makeTask({ status: 'done' }) } })
     expect(wrapper.find('h3').classes()).toContain('line-through')

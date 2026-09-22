@@ -6,7 +6,7 @@ const props = defineProps({
   tasks: Array,
 })
 
-const emit = defineEmits(['toggle', 'delete'])
+const emit = defineEmits(['toggle', 'delete', 'edit'])
 
 const filter = ref('all')
 
@@ -52,6 +52,7 @@ const statusLabels = { all: '全部', todo: '待办', 'in-progress': '进行中'
         :task="task"
         @toggle="emit('toggle', $event)"
         @delete="emit('delete', $event)"
+        @edit="emit('edit', $event)"
       />
     </div>
   </div>

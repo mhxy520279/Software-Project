@@ -5,7 +5,7 @@ const props = defineProps({
   task: Object,
 })
 
-const emit = defineEmits(['toggle', 'delete'])
+const emit = defineEmits(['toggle', 'delete', 'edit'])
 
 const priorityColor = computed(() => {
   const map = { high: 'border-red-500', medium: 'border-yellow-500', low: 'border-green-500' }
@@ -46,13 +46,22 @@ const statusLabels = { todo: '待办', 'in-progress': '进行中', done: '已完
           </div>
         </div>
       </div>
-      <button
-        @click.stop="$emit('delete', task.id)"
-        class="text-gray-300 hover:text-red-500 transition-colors ml-2"
-        title="删除任务"
-      >
-        ✕
-      </button>
+      <div class="flex items-center gap-1 ml-2 shrink-0">
+        <button
+          @click.stop="$emit('edit', task.id)"
+          class="text-gray-300 hover:text-indigo-500 transition-colors"
+          title="编辑任务"
+        >
+          ✎
+        </button>
+        <button
+          @click.stop="$emit('delete', task.id)"
+          class="text-gray-300 hover:text-red-500 transition-colors"
+          title="删除任务"
+        >
+          ✕
+        </button>
+      </div>
     </div>
   </div>
 </template>

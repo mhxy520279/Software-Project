@@ -7,15 +7,26 @@ import TaskModal from './components/TaskModal.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 
 const showModal = ref(false)
+const editingTask = ref(null)
 const view = ref('list')
 
 function handleAddTask(task) {
-  taskStore.addTask(task)
+  if (editingTask.value && editingTask.value.id) {
+    taskStore.updateTask(editingTask.value.id, task)
+  } else {
+    taskStore.addTask(task)
+  }
   showModal.value = false
+  editingTask.value = null
 }
 
 function handleMoveTask(id, status) {
   taskStore.updateTask(id, { status })
+}
+
+function openEdit(id) {
+  editingTask.value = taskStore.tasks.find(t => t.id === id) || null
+  showModal.value = true
 }
 </script>
 
@@ -52,12 +63,12 @@ function handleMoveTask(id, status) {
         </button>
       </div>
 
-      <TaskList v-if="view === 'list'" :tasks="taskStore.tasks" @toggle="taskStore.toggleTaskStatus" @delete="taskStore.deleteTask" />
-      <KanbanBoard v-else :tasks="taskStore.tasks" @toggle="taskStore.toggleTaskStatus" @delete="taskStore.deleteTask" @move="handleMoveTask" />
+      <TaskList v-if="view === 'list'" :tasks="taskStore.tasks" @toggle="taskStore.toggleTaskStatus" @delete="taskStore.deleteTask" @edit="openEdit" />
+      <KanbanBoard v-else :tasks="taskStore.tasks" @toggle="taskStore.toggleTaskStatus" @delete="taskStore.deleteTask" @move="handleMoveTask" @edit="openEdit" />
     </main>
 
     <Teleport to="body">
-      <TaskModal v-if="showModal" @close="showModal = false" @submit="handleAddTask" />
+      <TaskModal v-if="showModal" :task="editingTask" @close="showModal = false; editingTask = null" @submit="handleAddTask" />
     </Teleport>
   </div>
 </template>

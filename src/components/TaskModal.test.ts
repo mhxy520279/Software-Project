@@ -50,4 +50,34 @@ describe('TaskModal', () => {
     await wrapper.find('.fixed.inset-0').trigger('click')
     expect(wrapper.emitted('close')).toBeTruthy()
   })
+
+  it('编辑模式预填任务数据并发出保留原 id/status/createdAt 的 submit', async () => {
+    const task = {
+      id: '42',
+      title: '原标题',
+      description: '原描述',
+      status: 'in-progress',
+      priority: 'low',
+      dueDate: '2026-11-01',
+      createdAt: '2026-09-01T00:00:00.000Z',
+    }
+    const wrapper = mount(TaskModal, { props: { task } })
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('h2').text()).toBe('编辑任务')
+    expect((wrapper.find('input').element as HTMLInputElement).value).toBe('原标题')
+    expect((wrapper.find('textarea').element as HTMLTextAreaElement).value).toBe('原描述')
+    expect((wrapper.find('select').element as HTMLSelectElement).value).toBe('low')
+    await wrapper.find('input').setValue('新标题')
+    await findButton(wrapper, '保存').trigger('click')
+    const payload = wrapper.emitted('submit')[0][0]
+    expect(payload).toEqual({
+      id: '42',
+      title: '新标题',
+      description: '原描述',
+      priority: 'low',
+      status: 'in-progress',
+      dueDate: '2026-11-01',
+      createdAt: '2026-09-01T00:00:00.000Z',
+    })
+  })
 })

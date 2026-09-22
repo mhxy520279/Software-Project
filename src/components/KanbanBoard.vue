@@ -6,7 +6,7 @@ const props = defineProps({
   tasks: Array,
 })
 
-const emit = defineEmits(['toggle', 'delete', 'move'])
+const emit = defineEmits(['toggle', 'delete', 'move', 'edit'])
 
 const columns = [
   { key: 'todo', label: '待办' },
@@ -71,6 +71,7 @@ function onDragEnd(e) {
             :task="task"
             @toggle="emit('toggle', $event)"
             @delete="emit('delete', $event)"
+            @edit="emit('edit', $event)"
           />
         </div>
 

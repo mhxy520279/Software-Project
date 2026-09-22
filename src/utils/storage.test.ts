@@ -35,4 +35,44 @@ describe('storage', () => {
     localStorage.setItem(STORAGE_KEY, '{broken json')
     expect(loadTasks()).toEqual([])
   })
+
+  it('存储为非数组的合法 JSON（null/数字/字符串/布尔）时返回空数组', () => {
+    localStorage.setItem(STORAGE_KEY, 'null')
+    expect(loadTasks()).toEqual([])
+    localStorage.setItem(STORAGE_KEY, '42')
+    expect(loadTasks()).toEqual([])
+    localStorage.setItem(STORAGE_KEY, '"abc"')
+    expect(loadTasks()).toEqual([])
+    localStorage.setItem(STORAGE_KEY, 'true')
+    expect(loadTasks()).toEqual([])
+  })
+
+  it('过滤非法任务元素，并保留合法元素且补齐可选字段', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify([
+        task,
+        null,
+        'garbage',
+        { id: 'bad', title: '缺状态' },
+        { id: '2', title: '合法任务', status: 'todo', priority: 'low' },
+      ])
+    )
+    expect(loadTasks()).toEqual([
+      task,
+      { id: '2', title: '合法任务', status: 'todo', priority: 'low', description: '', dueDate: '', createdAt: '' },
+    ])
+  })
+
+  it('过滤 status / priority 非法的任务元素', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify([
+        { ...task, status: 'urgent' },
+        { ...task, priority: 'critical' },
+        { ...task, id: '' },
+      ])
+    )
+    expect(loadTasks()).toEqual([])
+  })
 })

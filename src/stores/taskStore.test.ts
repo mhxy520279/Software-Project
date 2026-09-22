@@ -41,6 +41,24 @@ describe('taskStore', () => {
     expect(taskStore.tasks[0].title).toBe('已保存任务')
   })
 
+  it('模拟刷新：持久化数据重新加载后不丢失', async () => {
+    const { addTask } = await importStore()
+    addTask(newTask({ id: 'persist-1', title: '刷新也要在' }))
+    // watch 异步触发持久化
+    await new Promise(r => setTimeout(r, 0))
+
+    // 模拟页面刷新：清空模块缓存后重新初始化应用
+    const { taskStore: fresh } = await importStore()
+    expect(fresh.tasks.some(t => t.id === 'persist-1')).toBe(true)
+    expect(fresh.tasks[0].title).toBe('刷新也要在')
+  })
+
+  it('持久化数据不合法时回退到默认任务而不崩溃', async () => {
+    localStorage.setItem(STORAGE_KEY, 'null')
+    const { taskStore } = await importStore()
+    expect(taskStore.tasks.length).toBe(3)
+  })
+
   it('addTask 将新任务添加到列表头部并持久化', async () => {
     const { taskStore, addTask } = await importStore()
     addTask(newTask())
